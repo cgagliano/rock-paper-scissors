@@ -27,10 +27,10 @@ function getHumanChoice(){
 
 function playRound(humanChoice, computerChoice){
 
-    let output = `Your selection: ${humanChoice}\nComputer selection: ${computerChoice}\n`;
+    let output = `Your selection: ${humanChoice}\nComputer selection: ${computerChoice}\n\n`;
     let winningChoice;
     let losingChoice;
-    let tiedGame = false;
+    let humanWon;
     let youWin = "You win! "
     let youLose = "You lose. "
 
@@ -38,59 +38,134 @@ function playRound(humanChoice, computerChoice){
         case("rock"):
             switch(computerChoice){
                 case("rock"):
-                    tiedGame = true;
-                    output = "Tied game! No points awarded!";
+                    output += "Tied game! No points awarded!";
                     break;
                 case("paper"):
-                    output += youLose;
+                    winningChoice = "paper";
+                    losingChoice = "rock";
+                    humanWon = false;
                     break;
                 case("scissors"):
-                    output += youWin;
+                    winningChoice = "rock";
+                    losingChoice = "scissors";
+                    humanWon = true;
                     break;
             }
+            break;
         case("paper"):
             switch(computerChoice){
                 case("rock"):
-                    output += youWin;
+                    winningChoice = "paper";
+                    losingChoice = "rock";
+                    humanWon = true;
                     break;
                 case("paper"):
-                    tiedGame = true;
-                    output = "Tied game! No points awarded!";
                     break;
                 case("scissors"):
-                    output += youLose;
+                    winningChoice = "scissors";
+                    losingChoice = "paper";
+                    humanWon = false;
                     break;
             }
+            break;
         case("scissors"):
             switch(computerChoice){
                 case("rock"):
-                    output += youLose;
+                    winningChoice = "rock";
+                    losingChoice = "scissors";
+                    humanWon = false;
                     break;
                 case("paper"):
-                    output += youWin;
+                    winningChoice = "scissors";
+                    losingChoice = "paper";
+                    humanWon = true;
                     break;
                 case("scissors"):
-                    tiedGame = true;
-                    output = "Tied game! No points awarded!";
                     break;
             }
+            break;
         }
     
+    if (humanWon){
+        output += youWin + `${winningChoice} beats ${losingChoice}\n`;
+        humanScore++;
+    }
+    else if(humanWon == false){
+        output += youLose + `${winningChoice} beats ${losingChoice}\n`;
+        computerScore++;
+    }
+    else{
+        output += "Tied game! No points awarded!";
+    }
 
-    if (tiedGame == false) output += `${winningChoice} beats ${losingChoice}\n`;
 
-    console.log(output)
+    return output;
+}
+
+function buttonClicked(button){
+    docuBody = document.querySelector("body");
+    outcomeMessage = playRound(button, getComputerChoice());
+    outcomeMessage += `Score: Human - ${humanScore} | Computer - ${computerScore}`
+    console.log(outcomeMessage);
+    const div = document.createElement("div");
+    div.textContent = outcomeMessage;
+    docuBody.appendChild(div)
+}
+
+function finalOutcome(){
+
+    console.log(computerScore);
+    console.log(humanScore);
+    let finalMessage = "Final outcome: ";
+
+    if (computerScore > humanScore){
+        finalMessage += "You lose! "
+    }
+    else{
+        finalMessage += "You win! "
+    }
+
+    console.log(finalMessage);
+    finalMessage += `Final Score: Human - ${humanScore} | Computer - ${computerScore}`;
+    const finalMessageDiv = document.createElement("div");
+    finalMessageDiv.textContent = finalMessage;
+    docuBody.appendChild(finalMessageDiv);
+    gameFinished = true;
+
 }
 
 console.log("Intializing game...")
-let humanScore, computerScore = 0;
+let humanScore = 0;
+let computerScore = 0;
+let gameFinished = false;
+const rockButton = document.querySelector("#rock");
+const paperButton = document.querySelector("#paper");
+const scissorsButton = document.querySelector("#scissors");
+i = 1;
+totalGames = 5
+// for (let i = 0; i <= 5; i++){
+    
+document.addEventListener('click', (event)=>{
+    if (gameFinished == false){
+        clickId = event.target.id;
+        if (clickId == "rock" || clickId == "paper" || clickId == "scissors"){
+            if(humanScore >= 5 || computerScore >=5){
+                 finalOutcome();
+            }
+            else{
+                console.log(`Game ${i} of ${totalGames}.`);
+                buttonClicked(clickId);
+                i++;
+            }
+            
+        }
+    }
+});
+// const humanSelection = getHumanChoice();
+// const computerSelection = getComputerChoice();
 
-for (let i = 0; i <= 5; i++){
-    const humanSelection = getHumanChoice();
-    const computerSelection = getComputerChoice();
-
-    console.log(`Turn ${i + 1} of 5...`)
-    playRound(humanSelection, computerSelection);
-}
+// console.log(`Turn ${i + 1} of 5...`)
+// playRound(humanSelection, computerSelection);
+// }
 
 
